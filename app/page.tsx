@@ -1,65 +1,254 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
 
 export default function Home() {
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [product, setProduct] = useState("T-shirt");
+  const [style, setStyle] = useState("Roi");
+  const [clientImage, setClientImage] = useState<string | null>(null);
+  const [designId, setDesignId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [progressStep, setProgressStep] = useState("");
+
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setSelectedFile(file);
+    setPreviewImage(URL.createObjectURL(file));
+    setClientImage(null);
+    setDesignId(null);
+  }
+
+  async function handleGenerate() {
+    if (!selectedFile) {
+      alert("Ajoute d'abord une photo.");
+      return;
+    }
+
+    setLoading(true);
+    setClientImage(null);
+    setDesignId(null);
+
+    setProgressStep("Analyse de la photo...");
+    setTimeout(() => setProgressStep("Création du personnage..."), 4000);
+    setTimeout(() => setProgressStep("Intégration sur le produit..."), 9000);
+    setTimeout(() => setProgressStep("Finalisation du rendu..."), 14000);
+
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+    formData.append("product", product);
+    formData.append("style", style);
+
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (data.clientImage) {
+      setClientImage(data.clientImage);
+      setDesignId(data.designId);
+    } else {
+      alert(data.error || "Erreur pendant la génération.");
+    }
+
+    setLoading(false);
+  }
+
+  function goToCheckout() {
+    if (!designId) {
+      alert("Aucun design trouvé.");
+      return;
+    }
+
+    window.location.href =
+      `https://qven8i-s1.myshopify.com/products/t-shirt-animal-personnalise?designId=${designId}`;
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+    <main className="min-h-screen bg-[#070609] text-white">
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(245,158,11,0.20),transparent_30%),radial-gradient(circle_at_80%_20%,rgba(147,51,234,0.18),transparent_30%),radial-gradient(circle_at_50%_90%,rgba(14,165,233,0.16),transparent_35%)]" />
+
+      <header className="relative z-10 border-b border-white/10 bg-black/20 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+          <div className="text-xl font-black tracking-tight">PetLegend</div>
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#create"
+            className="rounded-full border border-white/15 px-5 py-2 text-sm font-bold text-white/80 hover:bg-white/10"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+            Créer mon design
           </a>
         </div>
-      </main>
+      </header>
+
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-14">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div>
+            <div className="mb-5 inline-flex rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-sm text-amber-100">
+              Créations IA personnalisées pour animaux
+            </div>
+
+            <h1 className="text-5xl font-black tracking-tight md:text-7xl">
+              Transforme ton animal en œuvre légendaire.
+            </h1>
+
+            <p className="mt-6 max-w-xl text-lg leading-8 text-white/65">
+              Upload une photo, choisis un style, et découvre ton compagnon
+              directement sur un produit premium avant de commander.
+            </p>
+          </div>
+
+          <div
+            id="create"
+            className="rounded-[2rem] border border-white/10 bg-white/[0.05] p-6 shadow-2xl"
+          >
+            <div className="rounded-[1.5rem] bg-black/40 p-6">
+              <h2 className="text-2xl font-black">Créer mon design</h2>
+              <p className="mt-2 text-sm text-white/50">
+                Choisis une photo claire de ton animal.
+              </p>
+
+              <div className="mt-6">
+                {!selectedFile ? (
+                  <label className="flex cursor-pointer items-center justify-center rounded-2xl border border-dashed border-amber-300/40 bg-amber-300/10 px-6 py-8 text-center font-bold text-amber-100 transition hover:bg-amber-300/15">
+                    Choisir une photo
+                    <input
+                      className="hidden"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                ) : (
+                  <div className="rounded-2xl border border-emerald-300/30 bg-emerald-300/10 p-4 text-emerald-100">
+                    Photo sélectionnée : {selectedFile.name}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                <SelectBox
+                  label="Produit"
+                  value={product}
+                  onChange={setProduct}
+                  options={["T-shirt", "Mug", "Poster"]}
+                />
+
+                <SelectBox
+                  label="Style"
+                  value={style}
+                  onChange={setStyle}
+                  options={["Roi", "Mafia Boss", "Super-héros"]}
+                />
+              </div>
+
+              <button
+                onClick={handleGenerate}
+                disabled={loading}
+                className="mt-6 w-full rounded-2xl bg-gradient-to-r from-amber-300 via-orange-300 to-pink-300 px-6 py-4 text-lg font-black text-black transition hover:scale-[1.01] disabled:opacity-50"
+              >
+                {loading ? "Création en cours..." : "Générer mon design"}
+              </button>
+
+              {loading && (
+                <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-sm text-amber-100">
+                  {progressStep}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <section className="mt-14 rounded-[2rem] border border-white/10 bg-white/[0.05] p-6">
+          {!previewImage && !clientImage && (
+            <div className="flex h-[460px] items-center justify-center rounded-[1.5rem] border border-dashed border-white/15 text-center text-white/40">
+              Ton résultat apparaîtra ici après génération
+            </div>
+          )}
+
+          {previewImage && !clientImage && (
+            <div className="grid gap-6 md:grid-cols-2">
+              <ImageBlock title="Photo originale" src={previewImage} />
+              <div className="flex items-center justify-center rounded-[1.5rem] border border-dashed border-white/15 text-white/40">
+                Clique sur “Générer mon design”
+              </div>
+            </div>
+          )}
+
+          {clientImage && (
+            <div className="grid gap-8 md:grid-cols-2 md:items-center">
+              <ImageBlock title="Photo originale" src={previewImage || ""} />
+
+              <div>
+                <p className="mb-3 text-sm text-amber-200">Résultat généré</p>
+                <img
+                  src={clientImage}
+                  alt="Résultat généré"
+                  className="w-full rounded-[1.5rem] shadow-2xl"
+                />
+
+                <button
+                  onClick={goToCheckout}
+                  className="mt-5 w-full rounded-2xl bg-emerald-400 px-6 py-4 text-lg font-black text-black hover:bg-emerald-300"
+                >
+                  Passer à la commande
+                </button>
+
+                <p className="mt-3 text-center text-sm text-white/45">
+                  Passez à l'étape suivante pour finaliser votre commande et
+                  renseigner vos informations de livraison.
+                </p>
+              </div>
+            </div>
+          )}
+        </section>
+      </section>
+    </main>
+  );
+}
+
+function SelectBox({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: string[];
+}) {
+  return (
+    <div>
+      <label className="text-sm font-medium text-white/75">{label}</label>
+      <select
+        className="mt-2 w-full rounded-2xl border border-white/10 bg-neutral-900 p-4"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function ImageBlock({ title, src }: { title: string; src: string }) {
+  return (
+    <div>
+      <p className="mb-3 text-sm text-white/50">{title}</p>
+      <img
+        src={src}
+        alt={title}
+        className="max-h-[480px] w-full rounded-[1.5rem] object-contain"
+      />
     </div>
   );
 }
