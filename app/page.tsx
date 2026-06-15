@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function Home() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [product, setProduct] = useState("T-shirt");
+  const [product, setProduct] = useState("Poster");
   const [style, setStyle] = useState("Roi");
   const [clientImage, setClientImage] = useState<string | null>(null);
   const [designId, setDesignId] = useState<string | null>(null);
@@ -135,7 +135,7 @@ export default function Home() {
                   label="Produit"
                   value={product}
                   onChange={setProduct}
-                  options={["T-shirt", "Mug", "Poster"]}
+                  options={["Poster", "T-shirt", "Mug"]}
                 />
 
                 <SelectBox

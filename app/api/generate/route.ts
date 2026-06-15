@@ -35,31 +35,111 @@ export async function POST(request: Request) {
     });
 
     const hFile = await loadReferenceImage(
-      "references/tshirt/royal/htshirt.png"
+      "references/poster/royal/hposter.png"
     );
 
     const prompt = `
-Use image 2 as the base product photograph.
+                      You are creating a premium e-commerce product visualization.
 
-Image 1 is the uploaded pet reference.
-Image 2 is the final t-shirt model photo.
+IMAGE 1:
+The pet photo. This is the identity reference.
 
-Create one premium ecommerce product preview:
-- Keep the person, pose, background, lighting and composition from image 2.
-- Transform the pet from image 1 into a ${style} character.
-- Place the transformed pet as a realistic printed design on the t-shirt.
-- Preserve the pet identity: fur color, markings, eyes, ears, muzzle and expression.
-- The print must look integrated into the fabric, not pasted.
-- Premium fashion campaign look.
-- No text, no logo, no watermark.
+IMAGE 2:
+A home interior poster mockup. This is only a placement reference.
+
+IMPORTANT:
+
+Do NOT use IMAGE 2 as a style reference.
+
+Do NOT copy its artistic style.
+
+Do NOT use its colors, lighting, artwork, or visual design as inspiration for the portrait.
+
+Use IMAGE 2 only to determine where the final artwork should appear inside the poster frame.
+
+Create a spectacular luxury Royal portrait of the pet from IMAGE 1.
+
+The pet must remain instantly recognizable.
+
+Preserve exactly:
+- fur color
+- fur markings
+- eye color
+- muzzle shape
+- ear shape
+- facial proportions
+- expression
+- distinctive traits
+
+The pet should appear as a noble royal figure in a timeless fine-art portrait.
+
+Museum-quality artwork.
+
+Luxury gallery quality.
+
+Ultra realistic.
+
+Extraordinary fur detail.
+
+Rich velvet fabrics.
+
+Elegant royal clothing.
+
+Subtle gold embroidery.
+
+Refined aristocratic styling.
+
+Powerful and emotional presence.
+
+Prestigious and timeless atmosphere.
+
+Cinematic lighting.
+
+Masterpiece-level execution.
+
+The portrait must feel worthy of a luxury art gallery, private collection, or premium hotel.
+
+After creating the royal portrait, place it naturally inside the poster frame shown in IMAGE 2.
+
+The poster must appear physically present within the room.
+
+Respect the frame position, perspective, scale, depth, lighting, reflections, shadows, and viewing angle from IMAGE 2.
+
+The artwork should look professionally printed and realistically mounted inside the frame.
+
+The final image should look like a real premium poster displayed in a high-end interior.
+
+The viewer should immediately think:
+"I want this poster in my home."
+
+Avoid:
+cartoon,
+caricature,
+humor,
+kitsch,
+cheap costume appearance,
+generic animal face,
+breed alteration,
+eye color changes,
+fur color changes,
+facial distortion,
+text,
+logo,
+watermark,
+signature,
+fantasy exaggeration.
+The royal portrait should be the visual focal point of the room.
+
+The viewer's eye must be immediately drawn to the artwork before noticing the surrounding interior.
+The artwork should look expensive, collectible, and professionally designed, as if sold by a luxury premium art brand.
 `;
 
     const result = await openai.images.edit({
-      model: "gpt-image-1",
+      model: "gpt-image-2",
       image: [petFile, hFile],
       prompt,
       size: "1024x1024",
-      quality: "medium",
+      quality: "high",
     });
 
     const imageBase64 = result.data?.[0]?.b64_json;
