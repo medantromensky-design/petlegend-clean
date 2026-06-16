@@ -1,7 +1,59 @@
 "use client";
 
 import { useState } from "react";
+async function resizeImage(file: File, maxSize = 1024): Promise<File> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
 
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height && width > maxSize) {
+        height = Math.round((height * maxSize) / width);
+        width = maxSize;
+      } else if (height > maxSize) {
+        width = Math.round((width * maxSize) / height);
+        height = maxSize;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Canvas non disponible"));
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error("Compression impossible"));
+            return;
+          }
+
+          resolve(
+            new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+              type: "image/jpeg",
+            })
+          );
+        },
+        "image/jpeg",
+        0.9
+      );
+    };
+
+    img.onerror = reject;
+    img.src = url;
+  });
+}
 export default function Home() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -12,12 +64,14 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [progressStep, setProgressStep] = useState("");
 
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    setSelectedFile(file);
-    setPreviewImage(URL.createObjectURL(file));
+    const resizedFile = await resizeImage(file, 1024);
+
+    setSelectedFile(resizedFile);
+    setPreviewImage(URL.createObjectURL(resizedFile));
     setClientImage(null);
     setDesignId(null);
   }

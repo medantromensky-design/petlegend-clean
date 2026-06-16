@@ -139,7 +139,7 @@ The artwork should look expensive, collectible, and professionally designed, as 
       image: [petFile, hFile],
       prompt,
       size: "1024x1024",
-      quality: "high",
+      quality: "medium",
     });
 
     const imageBase64 = result.data?.[0]?.b64_json;
