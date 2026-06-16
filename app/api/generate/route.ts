@@ -2,11 +2,16 @@ import OpenAI from "openai";
 import { toFile } from "openai/uploads";
 import fs from "fs";
 import path from "path";
+import { v2 as cloudinary } from "cloudinary";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 async function loadReferenceImage(relativePath: string) {
   const fullPath = path.join(process.cwd(), "public", relativePath);
   const buffer = fs.readFileSync(fullPath);
@@ -153,9 +158,19 @@ The artwork should look expensive, collectible, and professionally designed, as 
 
     const designId = `design-${Date.now()}`;
 
+    const imageUrl = await cloudinary.uploader.upload(
+      `data:image/png;base64,${imageBase64}`,
+      {
+        public_id: designId,
+        folder: "petlegend",
+        resource_type: "image",
+      }
+    );
+
     return Response.json({
       clientImage: `data:image/png;base64,${imageBase64}`,
       designId,
+      imageUrl: imageUrl.secure_url,
     });
   } catch (error) {
     console.error(error);

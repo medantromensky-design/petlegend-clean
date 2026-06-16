@@ -5,6 +5,7 @@ async function resizeImage(file: File, maxSize = 1024): Promise<File> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
+    
 
     img.onload = () => {
       URL.revokeObjectURL(url);
@@ -63,6 +64,7 @@ export default function Home() {
   const [designId, setDesignId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [progressStep, setProgressStep] = useState("");
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -74,6 +76,7 @@ export default function Home() {
     setPreviewImage(URL.createObjectURL(resizedFile));
     setClientImage(null);
     setDesignId(null);
+    setImageUrl(null);
   }
 
   async function handleGenerate() {
@@ -106,6 +109,7 @@ export default function Home() {
     if (data.clientImage) {
       setClientImage(data.clientImage);
       setDesignId(data.designId);
+      setImageUrl(data.imageUrl);
     } else {
       alert(data.error || "Erreur pendant la génération.");
     }
@@ -114,13 +118,13 @@ export default function Home() {
   }
 
   function goToCheckout() {
-    if (!designId) {
-      alert("Aucun design trouvé.");
-      return;
-    }
+  if (!designId || !imageUrl) {
+    alert("Aucun design trouvé.");
+    return;
+  }
 
-    window.location.href =
-      `https://qven8i-s1.myshopify.com/products/t-shirt-animal-personnalise?designId=${designId}`;
+  window.location.href =
+    `https://qven8i-s1.myshopify.com/products/t-shirt-animal-personnalise?designId=${designId}&imageUrl=${encodeURIComponent(imageUrl)}`;
   }
 
   return (
