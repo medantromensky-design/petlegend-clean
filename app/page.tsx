@@ -58,8 +58,8 @@ async function resizeImage(file: File, maxSize = 1024): Promise<File> {
 export default function Home() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [product, setProduct] = useState("Poster");
-  const [style, setStyle] = useState("Roi");
+  const [product] = useState("Poster");
+  const [style, setStyle] = useState("Mafia Boss");
   const [clientImage, setClientImage] = useState<string | null>(null);
   const [designId, setDesignId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -70,7 +70,7 @@ export default function Home() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const resizedFile = await resizeImage(file, 1024);
+    const resizedFile = await resizeImage(file, 768);
 
     setSelectedFile(resizedFile);
     setPreviewImage(URL.createObjectURL(resizedFile));
@@ -89,10 +89,11 @@ export default function Home() {
     setClientImage(null);
     setDesignId(null);
 
-    setProgressStep("Analyse de la photo...");
-    setTimeout(() => setProgressStep("Création du personnage..."), 4000);
-    setTimeout(() => setProgressStep("Intégration sur le produit..."), 9000);
-    setTimeout(() => setProgressStep("Finalisation du rendu..."), 14000);
+    setProgressStep("Analyse de la photo de votre animal...");
+    setTimeout(() => setProgressStep("Création du personnage légendaire..."), 6000);
+    setTimeout(() => setProgressStep("Peinture du portrait premium..."), 14000);
+    setTimeout(() => setProgressStep("Intégration dans votre poster..."), 26000);
+    setTimeout(() => setProgressStep("Finalisation du rendu haute qualité..."), 42000);
 
     const formData = new FormData();
     formData.append("image", selectedFile);
@@ -190,33 +191,21 @@ export default function Home() {
 
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 <SelectBox
-                  label="Produit"
-                  value={product}
-                  onChange={setProduct}
-                  options={["Poster", "T-shirt", "Mug"]}
-                />
-
-                <SelectBox
                   label="Style"
                   value={style}
                   onChange={setStyle}
-                  options={["Roi", "Mafia Boss", "Super-héros"]}
+                  options={["Mafia Boss", "Imperial", "Elfique"]}
                 />
               </div>
 
               <button
                 onClick={handleGenerate}
                 disabled={loading}
-                className="mt-6 w-full rounded-2xl bg-gradient-to-r from-amber-300 via-orange-300 to-pink-300 px-6 py-4 text-lg font-black text-black transition hover:scale-[1.01] disabled:opacity-50"
+                className="mt-6 w-full rounded-2xl bg-gradient-to-r from-amber-300 via-orange-300 to-pink-300 px-6 py-4 text-lg font-black text-black transition hover:scale-[1.01] disabled:opacity-70"
               >
-                {loading ? "Création en cours..." : "Générer mon design"}
+                {loading ? progressStep || "Création en cours..." : "Générer mon poster"}
               </button>
 
-              {loading && (
-                <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-sm text-amber-100">
-                  {progressStep}
-                </div>
-              )}
             </div>
           </div>
         </div>
