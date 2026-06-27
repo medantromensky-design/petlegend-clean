@@ -135,12 +135,21 @@ export default function Home() {
       <header className="relative z-10 border-b border-white/10 bg-black/20 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div className="text-xl font-black tracking-tight">PetLegend</div>
-          <a
-            href="#create"
-            className="rounded-full border border-white/15 px-5 py-2 text-sm font-bold text-white/80 hover:bg-white/10"
-          >
-            Créer mon design
-          </a>
+          <div className="flex items-center gap-3">
+            <a
+              href="#create"
+              className="rounded-full border border-white/15 px-5 py-2 text-sm font-bold text-white/80 hover:bg-white/10"
+            >
+              Create
+            </a>
+
+            <a
+              href="https://qven8i-s1.myshopify.com"
+              className="rounded-full bg-gradient-to-r from-amber-300 via-orange-300 to-pink-300 px-5 py-2 text-sm font-black text-black hover:scale-105"
+            >
+              Shop
+            </a>
+          </div>
         </div>
       </header>
 
@@ -220,9 +229,12 @@ export default function Home() {
           {previewImage && !clientImage && (
             <div className="grid gap-6 md:grid-cols-2">
               <ImageBlock title="Photo originale" src={previewImage} />
-              <div className="flex items-center justify-center rounded-[1.5rem] border border-dashed border-white/15 text-white/40">
-                Clique sur “Générer mon design”
-              </div>
+
+              {!loading && (
+                <div className="flex items-center justify-center rounded-[1.5rem] border border-dashed border-white/15 text-white/40">
+                  Clique sur « Générer mon poster »
+                </div>
+              )}
             </div>
           )}
 
@@ -254,6 +266,34 @@ export default function Home() {
           )}
         </section>
       </section>
+      <section className="mt-20">
+  <div className="mb-8 text-center">
+    <p className="text-sm font-bold uppercase tracking-[0.35em] text-amber-200/70">
+      Inspiration Gallery
+    </p>
+    <h2 className="mt-3 text-4xl font-black md:text-5xl">
+      Discover the PetLegend styles
+    </h2>
+    <p className="mx-auto mt-4 max-w-2xl text-white/55">
+      Explore a few premium examples before creating your own custom poster.
+    </p>
+  </div>
+
+  <div className="grid gap-5 md:grid-cols-3">
+    <ExampleCard
+      title="Mafia Boss"
+      image="/examples/mafia-1.jpg"
+    />
+    <ExampleCard
+      title="Imperial"
+      image="/examples/imperial-1.jpg"
+    />
+    <ExampleCard
+      title="Elfique"
+      image="/examples/elfique-1.jpg"
+    />
+  </div>
+</section>  
     </main>
   );
 }
@@ -299,3 +339,49 @@ function ImageBlock({ title, src }: { title: string; src: string }) {
     </div>
   );
 }
+function ExampleCard({ title, image }: { title: string; image: string }) {
+  return (
+    <div className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.05] p-3 shadow-2xl transition hover:-translate-y-1 hover:bg-white/[0.08]">
+      <div className="relative overflow-hidden rounded-[1.5rem]">
+        <img
+          src={image}
+          alt={title}
+          className="h-[360px] w-full object-cover transition duration-700 group-hover:scale-105"
+        />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <p className="text-2xl font-black">{title}</p>
+          <p className="mt-1 text-sm text-white/60">
+            Premium custom poster style
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+<section className="mt-24 rounded-[2rem] border border-white/10 bg-gradient-to-r from-amber-300/10 via-orange-300/10 to-pink-300/10 p-12 text-center">
+
+  <p className="text-sm font-bold uppercase tracking-[0.35em] text-amber-200">
+    Ready?
+  </p>
+
+  <h2 className="mt-4 text-5xl font-black">
+    Own your legendary poster.
+  </h2>
+
+  <p className="mx-auto mt-6 max-w-2xl text-lg text-white/70">
+    Every artwork is created exclusively for you using AI and printed as a premium museum-quality poster.
+  </p>
+
+  <div className="mt-10 flex justify-center">
+    <a
+      href="https://qven8i-s1.myshopify.com"
+      className="rounded-full bg-gradient-to-r from-amber-300 via-orange-300 to-pink-300 px-10 py-5 text-xl font-black text-black transition hover:scale-105"
+    >
+      Browse Posters →
+    </a>
+  </div>
+
+</section>
