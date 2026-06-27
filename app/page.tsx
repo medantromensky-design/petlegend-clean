@@ -290,7 +290,7 @@ export default function Home() {
     />
     <ExampleCard
       title="Elfique"
-      image="/examples/elfique-1.jpg"
+      image="/examples/elfique-2.jpg"
     />
   </div>
 </section>  
