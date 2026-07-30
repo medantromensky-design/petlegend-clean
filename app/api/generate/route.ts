@@ -490,7 +490,7 @@ The final result should feel like a luxury premium poster sold by a high-end art
       );
     }
 
-    const designId = `design-${Date.now()}`;
+    const designId = `PL-${Date.now().toString().slice(-8)}`;
 
     const imageUrl = await cloudinary.uploader.upload(
       `data:image/png;base64,${imageBase64}`,
